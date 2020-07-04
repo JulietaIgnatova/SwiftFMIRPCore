@@ -83,7 +83,7 @@ class Game {
                             //специални команди
                             switch command {
                             case "finish":
-                                playerMoveIsNotFinished = false
+                                playerMoveIsNmotFinished = false
                                 print("Вашият ход приключи.")
                             case "map":
                                 print("Отпечатваме картата:")

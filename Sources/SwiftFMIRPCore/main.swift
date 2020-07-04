@@ -6,3 +6,4 @@ var mapRendered = DefaultMapRenderer()
 var game = Game(mapGenerator: mapGenerator, playerGenerator: playerGenerator, mapRenderer: mapRendered)
 
 game.run()
+print("hello juji i mitko ")

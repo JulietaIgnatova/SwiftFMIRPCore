@@ -3,8 +3,9 @@ protocol Map {
     var players: [Player] {get}
     var maze: [[MapTile]] {get}
 
-    func availableMoves(player: Player) -> [PlayerMove]
-    func move(player: Player, move: PlayerMove)
+    // func availableMoves(player: Player) -> [PlayerMove]
+    // func move(player: Player, move: PlayerMove)
+    
 }
 
 protocol MapRenderer {
@@ -58,6 +59,7 @@ enum MapMoveDirection {
 protocol MapTile {
     var type: MapTileType {get set}
     var state: String {get set}
+   
 }
 
 enum MapTileType {
