@@ -1,28 +1,27 @@
 protocol Map {
     init(players: [Player])
-    var players: [Player] {get}
-    var maze: [[MapTile]] {get}
+    var players: [Player] { get }
+    var maze: [[MapTile]] { get }
 
-    // func availableMoves(player: Player) -> [PlayerMove]
-    // func move(player: Player, move: PlayerMove)
-    
+    func availableMoves(player: Player) -> [PlayerMove]
+    func move(player: Player, move: PlayerMove)
 }
 
 protocol MapRenderer {
-    func render(map:Map)
+    func render(map: Map)
 }
 
 protocol PlayerMove {
-    var direction: MapMoveDirection {get set}
-    
-    var friendlyCommandName: String {get set} 
+    var direction: MapMoveDirection { get set }
+
+    var friendlyCommandName: String { get set }
 }
 
 class StandartPlayerMove: PlayerMove {
     var direction: MapMoveDirection
-    
+
     var friendlyCommandName: String
-    
+
     init(direction: MapMoveDirection) {
         self.direction = direction
         switch self.direction {
@@ -41,10 +40,10 @@ class StandartPlayerMove: PlayerMove {
 extension PlayerMove {
     var allMoves: [PlayerMove] {
         return [
-        StandartPlayerMove(direction: .up),
-        StandartPlayerMove(direction: .down),
-        StandartPlayerMove(direction: .left),
-        StandartPlayerMove(direction: .right)
+            StandartPlayerMove(direction: .up),
+            StandartPlayerMove(direction: .down),
+            StandartPlayerMove(direction: .left),
+            StandartPlayerMove(direction: .right),
         ]
     }
 }
@@ -57,9 +56,8 @@ enum MapMoveDirection {
 }
 
 protocol MapTile {
-    var type: MapTileType {get set}
-    var state: String {get set}
-   
+    var type: MapTileType { get set }
+    var state: String { get set }
 }
 
 enum MapTileType {
@@ -71,7 +69,5 @@ enum MapTileType {
 }
 
 protocol MapGenerator {
-    func generate(players:[Player]) -> Map
+    func generate(players: [Player]) -> Map
 }
-
-

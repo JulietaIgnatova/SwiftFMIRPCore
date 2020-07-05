@@ -1,12 +1,11 @@
 struct DefaultHero: Hero {
-   var race: String  = "Random Race"
+    var race: String = "Random Race"
 
     var energy: Int = 5
     var lifePoitns: Int = 7
 
-    var weapon: Weapon?  = nil
+    var weapon: Weapon? = nil
     var armor: Armor? = nil
-
 }
 
 struct NoArmor: Armor {
@@ -22,7 +21,7 @@ struct WoodenStick: Weapon {
 class DefaultPlayer: Player {
     var name: String = "Default Player"
     var hero: Hero = DefaultHero()
-    var isAlive: Bool  = true
+    var isAlive: Bool = true
 }
 
 struct DefaultPlayerGenerator: PlayerGenerator {
@@ -30,7 +29,7 @@ struct DefaultPlayerGenerator: PlayerGenerator {
     init(heroGenerator: HeroGenerator) {
         self.heroGenerator = heroGenerator
     }
-    
+
     func generatePlayer(name: String) -> Player {
         var player = DefaultPlayer()
         player.name = name
@@ -45,61 +44,60 @@ struct DefaultHeroGenerator: HeroGenerator {
     }
 }
 
-struct DefaultMapGenerator : MapGenerator {
+struct DefaultMapGenerator: MapGenerator {
     func generate(players: [Player]) -> Map {
         return DefaultMap(players: players)
     }
 }
+
 class DefaultMapTile: MapTile {
     var type: MapTileType
     var state: String
-    
+
     init(type: MapTileType) {
         self.type = type
         state = ""
     }
 }
 
-class DefaultMap : Map {
+class DefaultMap: Map {
     required init(players: [Player]) {
         self.players = players
     }
 
     var players: [Player]
     var maze: [[MapTile]] = [
-        [DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [DefaultMapTile(type: .wall), DefaultMapTile(type: .empty), DefaultMapTile(type: .wall),DefaultMapTile(type: .rock), DefaultMapTile(type: .chest), DefaultMapTile(type: .empty), DefaultMapTile(type: .wall)],
-        
-        [DefaultMapTile(type: .wall), DefaultMapTile(type: .empty), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)]
-        
+        [DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
+
+        [DefaultMapTile(type: .wall), DefaultMapTile(type: .empty), DefaultMapTile(type: .wall), DefaultMapTile(type: .rock), DefaultMapTile(type: .chest), DefaultMapTile(type: .empty), DefaultMapTile(type: .wall)],
+
+        [DefaultMapTile(type: .wall), DefaultMapTile(type: .empty), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
+
+        [DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
+
+        [DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
+
+        [DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
     ]
 
-    func availableMoves(player: Player) -> [PlayerMove] {
+    func availableMoves(player _: Player) -> [PlayerMove] {
         return []
     }
 
-    func move(player: Player, move: PlayerMove) {
-       //ТОДО: редуцирай енергията на героя на играча с 1
+    func move(player _: Player, move _: PlayerMove) {
+        // ТОДО: редуцирай енергията на героя на играча с 1
     }
-    
 }
 
-class DefaultFightGenerator : FightGenerator {
-    //TBD
+class DefaultFightGenerator: FightGenerator {
+    // TBD
 }
 
-class DefaultEquipmentGenerator : EquipmentGenerator {
+class DefaultEquipmentGenerator: EquipmentGenerator {
     var allArmors: [Armor]
-    
+
     var allWeapons: [Weapon]
-    
+
     init() {
         allArmors = [NoArmor()]
         allWeapons = [WoodenStick()]
@@ -109,35 +107,35 @@ class DefaultEquipmentGenerator : EquipmentGenerator {
 class DefaultMapRenderer: MapRenderer {
     func render(map: Map) {
         for row in map.maze {
-            self.renderMapRow(row: row)
+            renderMapRow(row: row)
         }
-        
+
         renderMapLegend()
     }
-    
+
     private func renderMapRow(row: [MapTile]) {
         var r = ""
         for tile in row {
             switch tile.type {
             case .chest:
-                r += "📦"
+                r += " 📦"
             case .rock:
-                r += "🗿"
+                r += " 🗿"
             case .teleport:
-                r += "💿"
+                r += " 💿"
             case .empty:
                 r += "  "
             case .wall:
-                r += "🧱"
+                r += " 🧱"
             default:
-                //empty
+                // empty
                 r += " "
             }
         }
-        
+
         print("\(r)")
     }
-    
+
     private func renderMapLegend() {
         print("No map legend, yet!")
     }

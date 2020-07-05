@@ -1,15 +1,10 @@
-struct MapGeneratorImpl : MapGenerator {
+struct MapGeneratorImpl: MapGenerator {
     func generate(players: [Player]) -> Map {
-        switch players.count {
-            case 2: return TwoPlayersMapGenerator(players: players)
-            case 3: return ThreePlayersMapGenerator(players: players)
-            case 4: return FourPlayersMapGenerator(players: players)
-            default: return DefaultMap(players: players)      
-        }  
+        return RandomizedMap(players: players)
     }
 }
 
-class DefaultMapTile: MapTile {
+class MapTileImpl: MapTile {
     var type: MapTileType
     var state: String
 
@@ -18,147 +13,70 @@ class DefaultMapTile: MapTile {
         state = ""
     }
 }
-class TwoPlayersMapGenerator : Map {
-required init(players: [Player]) {
-        self.players = players
-    }
 
-    var players: [Player]
-
-    var maze: [[MapTile]] = [
-        [ DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .empty), DefaultMapTile(type: .wall),DefaultMapTile(type: .rock), DefaultMapTile(type: .chest), DefaultMapTile(type: .empty), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .empty), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)]
-        
-    ]
-
+class RandomizedMap: Map {
     
-}
-
-class ThreePlayersMapGenerator: Map {
-    required init(players: [Player]) {
+    required init(players : [Player]) {
         self.players = players
-    }
+        var dimensionOfMap = players.count * multiplier
+        self.maze = Array(repeating: Array(repeating: MapTileImpl(type: .empty), count: dimensionOfMap), count: dimensionOfMap)
 
+        initializeMap(dimensionOfMap)
+    }
     var players: [Player]
+    let multiplier = 3
+    var maze: [[MapTile]]
 
-    var maze: [[MapTile]] = [
-        [ DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .empty), DefaultMapTile(type: .wall),DefaultMapTile(type: .rock), DefaultMapTile(type: .chest), DefaultMapTile(type: .empty), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .empty), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)]
-        
-    ]
 
-    
-}
+    func initializeMap(_ dimensionOfMap : Int) {
+        let wallProbability = 0.05
+        let chestProbability = 0.05
+        let rockProbability = 0.05
+        let teleportProbability = 0.05
+        let emptyProbability = 0.8
 
-class FourPlayersMapGenerator: Map {
-    required init(players: [Player]) {
-        self.players = players
-    }
 
-    var players: [Player]
-
-    var maze: [[MapTile]] = [
-        [ DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .empty), DefaultMapTile(type: .wall),DefaultMapTile(type: .rock), DefaultMapTile(type: .chest), DefaultMapTile(type: .empty), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .empty), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [ DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)]
-        
-    ]
-
-   
-}
-
-class DefaultMap : Map {
-    required init(players: [Player]) {
-        self.players = players
-    }
-
-    var players: [Player]
-
-    var maze: [[MapTile]] = [
-        [DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [DefaultMapTile(type: .wall), DefaultMapTile(type: .empty), DefaultMapTile(type: .wall),DefaultMapTile(type: .rock), DefaultMapTile(type: .chest), DefaultMapTile(type: .empty), DefaultMapTile(type: .wall)],
-        
-        [DefaultMapTile(type: .wall), DefaultMapTile(type: .empty), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)],
-        
-        [DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall),DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall), DefaultMapTile(type: .wall)]
-        
-    ]
-}
-
-extension Map {
-
-     func availableMoves(player: Player) -> [PlayerMove] {
-        return []
-    }
-    mutating func move(player: Player, move: PlayerMove) {
-       //ТОДО: редуцирай енергията на героя на играча с 1
-    }
-}
-
-class DefaultMapRenderer: MapRenderer {
-    func render(map: Map) {
-        for row in map.maze {
-            self.renderMapRow(row: row)
-        }
-        
-        renderMapLegend()
-    }
-    
-    private func renderMapRow(row: [MapTile]) {
-        var r = ""
-        for tile in row {
-            switch tile.type {
-            case .chest:
-                r += "📦"
-            case .rock:
-                r += "🗿"
-            case .teleport:
-                r += "💿"
-            case .empty:
-                r += "  "
-            case .wall:
-                r += "🧱"
-            default:
-                //empty
-                r += " "
+        for i in 0 ..< dimensionOfMap {
+            for j in 0 ..< dimensionOfMap {
+                var tile: MapTileImpl
+                var randomIndex = randomNumber(probabilities: [wallProbability, chestProbability, rockProbability, teleportProbability, emptyProbability])
+                switch randomIndex {
+                case 0: tile = MapTileImpl(type: .wall)
+                case 1: tile = MapTileImpl(type: .chest)
+                case 2: tile = MapTileImpl(type: .rock)
+                case 3: tile = MapTileImpl(type: .teleport)
+                default: tile = MapTileImpl(type: .empty)
+                }
+                self.maze[i][j] = tile
             }
         }
-        
-        print("\(r)")
     }
-    
-    private func renderMapLegend() {
-        print("No map legend, yet!")
+
+    func randomNumber(probabilities: [Double]) -> Int {
+        // Sum of all probabilities (so that we don't have to require that the sum is 1.0):
+        let sum = probabilities.reduce(0, +)
+        // Random number in the range 0.0 <= rnd < sum :
+        let rnd = Double.random(in: 0.0 ..< sum)
+        // Find the first interval of accumulated probabilities into which `rnd` falls:
+        var accum = 0.0
+        for (i, p) in probabilities.enumerated() {
+            accum += p
+            if rnd < accum {
+                return i
+            }
+        }
+        // This point might be reached due to floating point inaccuracies:
+        return (probabilities.count - 1)
+    }
+
+    func availableMoves(player _: Player) -> [PlayerMove] {
+        return []
+    }
+
+    func move(player _: Player, move _: PlayerMove) {
+        // ТОДО: редуцирай енергията на героя на играча с 1
     }
 }
+
+
+
