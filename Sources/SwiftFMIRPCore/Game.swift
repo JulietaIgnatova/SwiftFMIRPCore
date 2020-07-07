@@ -35,7 +35,7 @@ class Game {
             players.append(playerGenerator.generatePlayer(name: "Player #\(i)"))
         }
 
-        let map = mapGenerator.generate(players: players)
+        var map = mapGenerator.generate(players: players)
         // 1. Избор на брой играчи. Минимум 2 броя.
         // 1. Генериране на карта с определени брой размери на базата на броя играчи.
         // 1. Докато има повече от един оцелял играч, изпълнявай ходове.
@@ -73,8 +73,8 @@ class Game {
                             move.friendlyCommandName == command
                         }) {
                             // разпозната команда
-                            map.move(player: currentPlayer, move: move)
-
+                            map.move(player: &currentPlayer, move: move)
+                            mapRenderer.render(map: map)
                         } else {
                             // иначе, провери за
                             // специални команди

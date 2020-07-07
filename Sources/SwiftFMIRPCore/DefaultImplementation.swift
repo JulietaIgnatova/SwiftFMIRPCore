@@ -22,6 +22,7 @@ class DefaultPlayer: Player {
     var name: String = "Default Player"
     var hero: Hero = DefaultHero()
     var isAlive: Bool = true
+    var currentPosition: (Int, Int) = (0, 0)
 }
 
 struct DefaultPlayerGenerator: PlayerGenerator {
@@ -40,7 +41,7 @@ struct DefaultPlayerGenerator: PlayerGenerator {
 
 struct DefaultHeroGenerator: HeroGenerator {
     func getRandom() -> Hero {
-        return DefaultHero()
+        return HeroRobot()
     }
 }
 
@@ -84,7 +85,7 @@ class DefaultMap: Map {
         return []
     }
 
-    func move(player _: Player, move _: PlayerMove) {
+    func move(player _: inout Player, move _: PlayerMove) {
         // ТОДО: редуцирай енергията на героя на играча с 1
     }
 }
