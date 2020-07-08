@@ -27,6 +27,11 @@ class MapTileForPlayerImpl: MapTile {
 struct Coordinates: Equatable {
     let x: Int
     let y: Int
+
+    init(x: Int, y: Int) {
+        self.x = x
+        self.y = y
+    }
 }
 
 class RandomizedMap: Map {
@@ -34,45 +39,46 @@ class RandomizedMap: Map {
     let multiplier = 3
     var maze: [[MapTile]]
 
-    // var positionOfPlayers : [(Int: x, Int: y)]
-    // var teleportPositions :  [(Int: x, Int: y)]
+    var positionOfPlayer: [String: Coordinates] = [:]
 
     required init(players: [Player]) {
         self.players = players
         var dimensionOfMap = players.count * multiplier
         maze = Array(repeating: Array(repeating: MapTileImpl(type: .empty), count: dimensionOfMap), count: dimensionOfMap)
 
+        // initialize map
         initializeMap(dimensionOfMap)
-        // razpredeli igrachi vyrhu karatta
+
+        // distribution of players on the map
         var positionListOfPlayers: [(Int, Int)] = []
 
         for player in players {
-            var i,j:Int
+            var i, j: Int
             repeat {
-                i = Int.random(in:0..<dimensionOfMap)
-                j = Int.random(in:0..<dimensionOfMap)
-            } while (checkIfPositionOfPlayerIsRepeated(list: positionListOfPlayers, current: (i,j)))
+                i = Int.random(in: 0 ..< dimensionOfMap)
+                j = Int.random(in: 0 ..< dimensionOfMap)
+            } while checkIfPositionOfPlayerIsRepeated(list: positionListOfPlayers, current: (i, j))
 
-            positionListOfPlayers.append((i,j))
-            //self.playersPositions[player.name] = Position(x:i,y:j)
-            player.currentPosition.0 = i
-            player.currentPosition.1 = j
+            positionListOfPlayers.append((i, j))
+
+            positionOfPlayer[player.name] = Coordinates(x: i, y: j)
 
             maze[i][j].type = .player
             maze[i][j].state = player.hero.race
         }
+        print(positionOfPlayer)
     }
 
-    private func checkIfPositionOfPlayerIsRepeated(list: [(Int,Int)], current: (Int, Int)) -> Bool{
+    private func checkIfPositionOfPlayerIsRepeated(list: [(Int, Int)], current: (Int, Int)) -> Bool {
         for el in list {
-            if (current.0 == el.0 && current.1 == el.1){
+            if current.0 == el.0, current.1 == el.1 {
                 return true
             }
         }
         return false
     }
 
-    func initializeMap(_ dimensionOfMap: Int) {
+    private func initializeMap(_ dimensionOfMap: Int) {
         let wallProbability = 0.05
         let chestProbability = 0.05
         let rockProbability = 0.05
@@ -95,10 +101,6 @@ class RandomizedMap: Map {
         }
     }
 
-    // func isValidPosition(x:Int, y:Int,map: Map)-> Bool {
-    //     return x>=0 && x < map.maze.count && y>=0 && y < map.maze.count && maze[x][y].type != .wall
-    // }
-
     func randomNumber(probabilities: [Double]) -> Int {
         // Sum of all probabilities (so that we don't have to require that the sum is 1.0):
         let sum = probabilities.reduce(0, +)
@@ -118,17 +120,19 @@ class RandomizedMap: Map {
 
     func availableMoves(player: Player) -> [PlayerMove] {
         var availableMoves: [PlayerMove] = [PlayerMove]()
+        let xCoord = positionOfPlayer[player.name]?.x ?? 0
+        let yCoord = positionOfPlayer[player.name]?.y ?? 0
 
-        if player.currentPosition.0 - 1 >= 0, maze[player.currentPosition.0 - 1][player.currentPosition.1].type != .wall {
+        if xCoord - 1 >= 0, maze[xCoord - 1][yCoord].type != .wall {
             availableMoves.append(StandartPlayerMove(direction: .up))
         }
-        if player.currentPosition.0 + 1 < maze.count, maze[player.currentPosition.0 + 1][player.currentPosition.1].type != .wall {
+        if xCoord + 1 < maze.count, maze[xCoord + 1][yCoord].type != .wall {
             availableMoves.append(StandartPlayerMove(direction: .down))
         }
-        if player.currentPosition.1 + 1 < maze[0].count, maze[player.currentPosition.0][player.currentPosition.1 + 1].type != .wall {
+        if yCoord + 1 < maze[0].count, maze[xCoord][yCoord + 1].type != .wall {
             availableMoves.append(StandartPlayerMove(direction: .right))
         }
-        if player.currentPosition.1 - 1 >= 0, maze[player.currentPosition.0][player.currentPosition.1 - 1].type != .wall {
+        if yCoord - 1 >= 0, maze[xCoord][yCoord - 1].type != .wall {
             availableMoves.append(StandartPlayerMove(direction: .left))
         }
 
@@ -139,36 +143,46 @@ class RandomizedMap: Map {
         // reduce the energy with 1
         player.reduceEnergy()
 
-        var coordX = player.currentPosition.0
-        var coordY = player.currentPosition.1
+        var coordX = positionOfPlayer[player.name]?.x ?? 0
+        var coordY = positionOfPlayer[player.name]?.y ?? 0
 
         maze[coordX][coordY].type = .empty
         maze[coordX][coordY].state = "empty"
 
         if move.direction == .up {
             coordX = coordX - 1
-            maze[coordX][coordY].type = .player
-            maze[coordX][coordY].state = player.hero.race
-
         } else if move.direction == .down {
             coordX = coordX + 1
-            maze[coordX][coordY].type = .player
-            maze[coordX][coordY].state = player.hero.race
-
         } else if move.direction == .right {
             coordY = coordY + 1
-            maze[coordX][coordY].type = .player
-            maze[coordX][coordY].state = player.hero.race
-
         } else if move.direction == .left {
             coordY = coordY - 1
-            maze[coordX][coordY].type = .player
-            maze[coordX][coordY].state = player.hero.race
         }
-        player.currentPosition.0 = coordX
-        player.currentPosition.1 = coordY
 
-        // TODO:
-        // fightIfTheTileIsOccupied()
+        checkFuturePosition(coordX: &coordX, coordY: &coordY, player: &player)
+
+        maze[coordX][coordY].type = .player
+        maze[coordX][coordY].state = player.hero.race
+        positionOfPlayer[player.name] = Coordinates(x: coordX, y: coordY)
+    }
+
+    private func checkFuturePosition(coordX: inout Int, coordY: inout Int, player: inout Player) {
+        if maze[coordX][coordY].state != "empty", maze[coordX][coordY].type == MapTileType.player {
+            print("You are going to fight with \(maze[coordX][coordY].state)")
+        } else if maze[coordX][coordY].type == MapTileType.rock {
+            print("Opss..You crashed into a rock! This will costs you one point energy!")
+            print("Your energy was \(player.hero.energy)")
+            player.reduceEnergy()
+            print("Now your energy is \(player.hero.energy)")
+        } else if maze[coordX][coordY].type == MapTileType.teleport {
+            var dimensionOfMap = players.count * multiplier
+            coordX = Int.random(in: 0 ..< dimensionOfMap)
+            coordY = Int.random(in: 0 ..< dimensionOfMap)
+            print("You have just teleported to -> \(coordX):\(coordY)!")
+
+        } else if maze[coordX][coordY].type == MapTileType.chest {
+            print("You just cаme across a treasure!")
+            // TODO: giveTreasure()
+        }
     }
 }

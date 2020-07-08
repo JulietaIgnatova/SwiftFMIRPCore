@@ -11,11 +11,7 @@ protocol PlayerGenerator {
 }
 
 extension Player {
-    mutating func addEnergy(x: Int) {
-        hero.energy += x
-    }
-
-    mutating func reduceEnergy() {
+     mutating func reduceEnergy() {
         hero.energy -= 1
     }
 }

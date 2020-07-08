@@ -29,7 +29,6 @@ class MapRendererImpl: MapRenderer {
             case .wall:
                 r += "|🧱 "
             default:
-                // empty
                 r += "|  "
             }
         }
@@ -42,8 +41,6 @@ class MapRendererImpl: MapRenderer {
     }
 
     private func printIfHero(tile: MapTile) -> String {
-        // print(tile.state)
-        // print("======== \(tile.state)")
         switch tile.state {
         case "Robots":
             return "|🤖"
@@ -57,10 +54,10 @@ class MapRendererImpl: MapRenderer {
 
     private func renderMapLegend() {
         print("\n Map legend:")
-        print("📦 - Treasure chest - it can bring you new armor or weapons)")
-        print("🗿 - Rock - it will be broken in order to move to this field and will costs you one point energy")
-        print("💿 - Teleport - it can transfers the player to a different tile")
-        print("🧱 - Wall - the player can't move to this field")
-        print("Players in the game are the Robot: 🤖, the Unicorn: 🦄, the Eagle: 🦅, the Fairy: 🧚🏻")
+        print("📦 - Treasure chest - It can bring you new armor or weapon")
+        print("🗿 - Rock - It will be broken in order to move to this field and will costs you one point energy")
+        print("💿 - Teleport - It can transfers the player to a different tile")
+        print("🧱 - Wall - The player can't move to this field")
+        print("Players in the game are the Robot: 🤖, the Unicorn: 🦄, the Eagle: 🦅 and the Fairy: 🧚🏻")
     }
 }
